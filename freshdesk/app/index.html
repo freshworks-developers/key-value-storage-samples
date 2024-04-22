@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -5,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data Storage Demo</title>
     <script src="https://static.freshdev.io/fdk/2.0/assets/fresh_client.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@freshworks/crayons@v4/dist/crayons/crayons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/@freshworks/crayons@v4/dist/crayons/crayons.js"></script>
   </head>
 
   <body>
@@ -13,13 +16,10 @@
       </fw-textarea>
 
       <span>
-        <fw-button color="secondary" class="note-save">Save</fw-button>
+        <fw-button color="primary" class="note-save">Save</fw-button>
         <fw-button color="danger" class="note-delete">Delete</fw-button>
       </span>
     </section>
   </body>
-  <script type="module" src="https://unpkg.com/@freshworks/crayons/dist/crayons/crayons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/@freshworks/crayons/dist/crayons/crayons.js"></script>
-
   <script defer src="./scripts/app.js"></script>
 </html>

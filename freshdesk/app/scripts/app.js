@@ -1,4 +1,4 @@
-var noteKey, client;
+let noteKey, client;
 
 (async function init() {
   client = await app.initialized();

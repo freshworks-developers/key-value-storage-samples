@@ -5,84 +5,84 @@
 
 let noteKey;
 
-function q(selector, context = document) {
-  return context.querySelector(selector);
-}
+const q = (selector, context = document) => context.querySelector(selector);
 
-document.addEventListener('DOMContentLoaded', () => {
-  (function () {
-    app.initialized().then((_client) => {
-      window.client = _client;
-      client.events.on('app.activated', () => {
-        fetchInfo(() => {
-          displayNote();
-          q("#note-save").addEventListener('click', saveNote);
-          q("#note-delete").addEventListener('click', deleteNote);
-        });
-      })
-    }, (err) => {
-      console.error('Error: Failed to initialise the app');
-      showError(err);
+const showError = async (err) => {
+  try {
+    const data = await client.interface.trigger("showNotify", {
+      type: "warning",
+      title: "Warning",
+      message: `Error: App is facing issues during initialization - ${err}`,
     });
+    console.info(`Err: Interface API - ${data}`);
+  } catch (error) {
+    console.error(`Some error Encountered: ${error}`);
+  }
+};
 
+const saveNote = async () => {
+  console.log('save note clicked');
+  const noteData = q("#note").value;
+  if (noteData === '') {
+    notify('warning', 'Note is empty');
+    return;
+  }
+  try {
+    await client.db.set(noteKey, { note: noteData });
+    notify('success', 'Note has been stored');
+  } catch {
+    notify('danger', 'Error storing the note');
+  }
+};
 
-    function showError(err) {
-      client.interface.trigger("showNotify", {
-        type: "warning", title: "Warning",
-        message: `Error: App is facing issues during initialzation - ${err}`
-      }).then(function (data) {
-        console.info(`Err: Interface API - ${data}`);
-      }).catch(function (error) {
-        console.error(`Some error Encountered: ${error}`);
-      });
-    }
+const deleteNote = async () => {
+  try {
+    await client.db.delete(noteKey);
+    q("#note").value = '';
+    notify('success', 'Note has been deleted');
+  } catch {
+    notify('danger', 'Error deleting the note');
+  }
+};
 
-    function saveNote() {
-      console.log('save note clicked')
-      var noteData = q("#note").value;
-      if (noteData == '') {
-        notify('warning', 'Note is empty');
-        return;
-      }
-      client.db.set(noteKey, { note: noteData }).then(() => {
-        notify('success', 'Note has been stored');
-      }, () => {
-        notify('danger', 'Error storing the note');
-      });
-    }
+const displayNote = async () => {
+  const data = await client.db.get(noteKey);
+  q("#note").value = data.note;
+};
 
-    function deleteNote() {
-      client.db.delete(noteKey)
-        .then(function () {
-          q("#note").value = '';
-          notify('success', 'Note has been deleted');
-        }, function () {
-          notify('danger', 'Error deleting the note');
-        });
-    }
+const notify = async (status, message) => {
+  await client.interface.trigger('showNotify', {
+    type: status,
+    message: message,
+  });
+};
 
-    function displayNote() {
-      client.db.get(noteKey).then((data) => {
-        q("#note").value = data.note;
-      });
-    }
+const fetchInfo = async (callback) => {
+  try {
+    const userData = await client.data.get('loggedInUser');
+    console.log(userData);
+    const ticketData = await client.data.get('ticket');
+    console.log(ticketData);
+    noteKey = `${userData.loggedInUser.id} : ${ticketData.ticket.id}`;
+    callback();
+  } catch (error) {
+    console.error(`Error fetching data: ${error}`);
+  }
+};
 
-    function notify(status, message) {
-      client.interface.trigger('showNotify', {
-        type: status,
-        message: message
-      });
-    }
-
-    function fetchInfo(callback) {
-      client.data.get('loggedInUser').then((userData) => {
-        console.log(userData)
-        client.data.get('ticket').then((ticketData) => {
-          console.log(ticketData)
-          noteKey = `${userData.loggedInUser.id} : ${ticketData.ticket.id}`;
-          callback();
-        });
-      });
-    }
-  })();
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const _client = await app.initialized();
+    window.client = _client;
+    client.events.on('app.activated', async () => {
+      await fetchInfo();
+      displayNote();
+      q("#note-save").addEventListener('click', saveNote);
+      q("#note-delete").addEventListener('click', deleteNote);
+    });
+  } catch (err) {
+    console.error('Error: Failed to initialize the app');
+    showError(err);
+  }
 });
+
