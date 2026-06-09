@@ -1,0 +1,30 @@
+{
+  "ticket_notes": {
+    "fields": [
+      {
+        "name": "ticket_id",
+        "label": "Ticket ID",
+        "type": "text",
+        "required": true,
+        "filterable": true
+      },
+      {
+        "name": "agent_id",
+        "label": "Agent ID",
+        "type": "text",
+        "required": true,
+        "filterable": true
+      },
+      {
+        "name": "note_content",
+        "label": "Note Content",
+        "type": "paragraph"
+      },
+      {
+        "name": "tags",
+        "label": "Tags",
+        "type": "text"
+      }
+    ]
+  }
+}

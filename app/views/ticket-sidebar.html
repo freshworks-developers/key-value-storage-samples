@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TechServe Data Storage</title>
+    <script async src="{{{appclient}}}"></script>
+    <link rel="stylesheet" href="../styles/ticket-sidebar.css" />
+  </head>
+  <body>
+    <div class="ts-app">
+      <header class="ts-header">
+        <fw-icon name="database" size="18" color="#2C5CC5"></fw-icon>
+        <div class="ts-header__text">
+          <span class="ts-header__brand">TechServe</span>
+          <span id="ticket-meta" class="ts-header__meta">Loading…</span>
+        </div>
+      </header>
+
+      <fw-tabs active-tab-name="notes">
+        <fw-tab slot="tab" panel="notes" name="Notes"></fw-tab>
+        <fw-tab slot="tab" panel="advanced" name="Advanced Storage"></fw-tab>
+
+        <fw-tab-panel name="notes">
+          <section class="panel">
+            <p class="panel__hint">Private sticky notes — key: <code id="note-key-label">agentId:ticketId</code></p>
+            <fw-textarea
+              id="note-text"
+              class="note-text"
+              label="Your note"
+              placeholder="Personal reminders for this ticket…"
+              rows="5"
+            ></fw-textarea>
+            <div class="panel__actions">
+              <fw-button id="note-save" color="primary" size="small">Save</fw-button>
+              <fw-button id="note-delete" color="danger" size="small">Delete</fw-button>
+            </div>
+          </section>
+        </fw-tab-panel>
+
+        <fw-tab-panel name="advanced">
+          <section class="panel">
+            <h3 class="panel__title">client.db.update</h3>
+            <p class="panel__hint">Increment views, append tags, or set nested fields on one KV record.</p>
+            <div class="panel__row">
+              <fw-button id="btn-increment" color="secondary" size="small">Increment views</fw-button>
+              <fw-button id="btn-append" color="secondary" size="small">Append tag</fw-button>
+              <fw-button id="btn-set-field" color="secondary" size="small">Set status</fw-button>
+            </div>
+            <pre id="update-output" class="output">No update yet.</pre>
+          </section>
+
+          <section class="panel">
+            <h3 class="panel__title">client.db.set — TTL &amp; setIf</h3>
+            <fw-input id="ttl-seconds" label="TTL (seconds)" type="number" value="120" min="30"></fw-input>
+            <div class="panel__row">
+              <fw-button id="btn-ttl-set" color="secondary" size="small">Set with TTL</fw-button>
+              <fw-button id="btn-setif-create" color="secondary" size="small">setIf not_exist</fw-button>
+              <fw-button id="btn-setif-update" color="secondary" size="small">setIf exist</fw-button>
+            </div>
+            <pre id="ttl-output" class="output">TTL / setIf not exercised yet.</pre>
+          </section>
+
+          <section class="panel">
+            <h3 class="panel__title">client.db.entity — Custom Objects</h3>
+            <p class="panel__hint">Entity <code>ticket_notes</code> from <code>config/entities.json</code>.</p>
+            <fw-textarea id="entity-note" label="Coaching note" rows="3" placeholder="Structured note for this ticket…"></fw-textarea>
+            <div class="panel__row">
+              <fw-button id="btn-entity-save" color="primary" size="small">Save entity</fw-button>
+              <fw-button id="btn-entity-load" color="secondary" size="small">Load entity</fw-button>
+            </div>
+            <pre id="entity-output" class="output">No entity record yet.</pre>
+          </section>
+
+          <section class="panel">
+            <h3 class="panel__title">Serverless $db (SMI)</h3>
+            <p class="panel__hint">Same KV APIs from <code>server/server.js</code> via <code>client.request.invoke</code>.</p>
+            <div class="panel__row">
+              <fw-button id="btn-srv-set" color="secondary" size="small">$db.set</fw-button>
+              <fw-button id="btn-srv-get" color="secondary" size="small">$db.get</fw-button>
+              <fw-button id="btn-srv-update" color="secondary" size="small">$db.update</fw-button>
+              <fw-button id="btn-srv-delete" color="secondary" size="small">$db.delete</fw-button>
+            </div>
+            <pre id="server-output" class="output">Serverless KV not invoked yet.</pre>
+          </section>
+        </fw-tab-panel>
+      </fw-tabs>
+    </div>
+
+    <script async type="module" src="https://cdn.jsdelivr.net/npm/@freshworks/crayons@v4/dist/crayons/crayons.esm.js"></script>
+    <script async nomodule src="https://cdn.jsdelivr.net/npm/@freshworks/crayons@v4/dist/crayons/crayons.js"></script>
+    <script defer src="../scripts/ticket-sidebar.js"></script>
+  </body>
+</html>
